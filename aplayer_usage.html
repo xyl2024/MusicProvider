@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APlayer 使用指南</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #333;
+            font-size: 1.3rem;
+            margin: 30px 0 15px 0;
+        }
+
+        .code-block {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .demo-player {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .demo-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-item h4 {
+            margin: 0 0 10px 0;
+            color: #667eea;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin: 20px 0;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+        }
+
+        .installation-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .method {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .method h4 {
+            margin: 0 0 15px 0;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 APlayer 使用指南</h1>
+            <p>美观且功能强大的 HTML5 音乐播放器</p>
+        </div>
+
+        <div class="content">
+            <!-- 基本使用 -->
+            <div class="section">
+                <h2>🎯 基本使用</h2>
+                
+                <div class="demo-player">
+                    <div class="demo-title">💫 基本播放器示例</div>
+                    <div id="aplayer1"></div>
+                </div>
+            </div>
+
+            <!-- 播放列表 -->
+            <div class="section">
+                <h2>📋 播放列表</h2>
+                <div class="demo-player">
+                    <div class="demo-title">🎵 播放列表示例</div>
+                    <div id="aplayer2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+    <script>
+        // 示例1：基本播放器
+        const ap1 = new APlayer({
+            container: document.getElementById('aplayer1'),
+            theme: '#667eea',
+            audio: {
+                name: 'Ave Mujica',
+                artist: 'Ave Mujica',
+                url: 'http://127.0.0.1:5000/api/audio/c143ed256c064d9d992a37cbbea41545.flac',
+                cover: 'https://via.placeholder.com/150x150/667eea/ffffff?text=Cover'
+            }
+        });
+
+        // 示例2：播放列表
+        const ap2 = new APlayer({
+            container: document.getElementById('aplayer2'),
+            theme: '#764ba2',
+            listFolded: false,
+            listMaxHeight: 90,
+            audio: [
+                {
+                    name: '示例歌曲 1',
+                    artist: '艺术家 A',
+                    url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
+                    cover: 'https://via.placeholder.com/150x150/764ba2/ffffff?text=Song1'
+                },
+                {
+                    name: '示例歌曲 2',
+                    artist: '艺术家 B',
+                    url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
+                    cover: 'https://via.placeholder.com/150x150/ff6b6b/ffffff?text=Song2'
+                }
+            ]
+        });
+
+        // 示例3：博客嵌入
+        const ap3 = new APlayer({
+            container: document.getElementById('aplayer3'),
+            theme: '#667eea',
+            mini: false,
+            audio: {
+                name: '博客背景音乐',
+                artist: '未知艺术家',
+                url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav',
+                cover: 'https://via.placeholder.com/150x150/667eea/ffffff?text=Blog'
+            }
+        });
+    </script>
+</body>
+</html>

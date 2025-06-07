@@ -1,0 +1,22 @@
+[
+  {
+    "id": "25d997f5-fe0a-47ed-bd2c-6702d84b6009",
+    "filename": "c143ed256c064d9d992a37cbbea41545.flac",
+    "original_name": "Ave Mujica-Ave Mujica.flac",
+    "title": "Ave Mujica",
+    "artist": "Ave Mujica",
+    "album": "Alea jacta est",
+    "url": "/api/audio/c143ed256c064d9d992a37cbbea41545.flac",
+    "upload_time": "2025-06-08T04:33:28.252387"
+  },
+  {
+    "id": "ddae860b-f598-4a1c-994d-a5193fb783f4",
+    "filename": "c5f72df7d2924e07ba2baee347bf49ff.flac",
+    "original_name": "TK from 凛として時雨-Unravel-《东京食尸鬼》TV动画片头曲.flac",
+    "title": "Unravel-《东京食尸鬼》TV动画片头曲",
+    "artist": "TK from 凛として時雨",
+    "album": "unravel",
+    "url": "/api/audio/c5f72df7d2924e07ba2baee347bf49ff.flac",
+    "upload_time": "2025-06-08T04:34:02.128262"
+  }
+]

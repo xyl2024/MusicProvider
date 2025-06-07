@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐文件管理器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+        }
+
+        .upload-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 30px 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .music-list {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .list-title {
+            font-size: 1.8rem;
+            color: #333;
+        }
+
+        .music-count {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .music-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .music-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .music-info {
+            flex: 1;
+            margin-left: 20px;
+            min-width: 0;
+        }
+
+        .music-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+            word-break: break-word;
+        }
+
+        .music-artist {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            word-break: break-word;
+        }
+
+        .music-album {
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+
+        .music-url {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #333;
+            word-break: break-all;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .music-url:hover {
+            background: #e8e8e8;
+            border-color: #667eea;
+        }
+
+        .music-url.copied {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: 15px;
+        }
+
+        .play-btn, .delete-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .play-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .music-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .no-music {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-music-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .message.show {
+            transform: translateX(0);
+        }
+
+        .message.success {
+            background: #4CAF50;
+        }
+
+        .message.error {
+            background: #f44336;
+        }
+
+        .audio-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .audio-player.show {
+            transform: translateY(0);
+        }
+
+        .player-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .current-music {
+            flex: 1;
+        }
+
+        .current-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .current-artist {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        audio {
+            flex: 2;
+            max-width: 400px;
+        }
+
+        .copy-tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .copy-tooltip .tooltiptext {
+            visibility: hidden;
+            width: 80px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -40px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+
+        .copy-tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .copy-tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-section, .music-list {
+                padding: 20px;
+            }
+            
+            .music-item {
+                flex-direction: column;
+                text-align: left;
+            }
+            
+            .music-info {
+                margin: 15px 0;
+            }
+            
+            .music-controls {
+                align-self: center;
+                margin-left: 0;
+            }
+            
+            .player-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 音乐文件管理器</h1>
+            <p>上传和管理你的音乐收藏</p>
+        </div>
+
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">🎵</div>
+                <div class="upload-text">点击或拖拽音乐文件到这里</div>
+                <div class="upload-hint">支持 MP3, WAV, FLAC, M4A, AAC, OGG 格式</div>
+                <input type="file" id="fileInput" accept=".mp3,.wav,.flac,.m4a,.aac,.ogg" multiple>
+            </div>
+        </div>
+
+        <div class="music-list">
+            <div class="list-header">
+                <h2 class="list-title">音乐列表</h2>
+                <div class="music-count" id="musicCount">0 首歌曲</div>
+            </div>
+            <div id="musicContainer">
+                <div class="loading">加载中...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="audio-player" id="audioPlayer">
+        <div class="player-content">
+            <div class="current-music">
+                <div class="current-title" id="currentTitle">未播放</div>
+                <div class="current-artist" id="currentArtist">-</div>
+            </div>
+            <audio controls id="audioElement">
+                您的浏览器不支持音频播放。
+            </audio>
+        </div>
+    </div>
+
+    <script>
+        class MusicManager {
+            constructor() {
+                this.musicList = [];
+                this.currentAudio = null;
+                this.initializeElements();
+                this.setupEventListeners();
+                this.loadMusicList();
+            }
+
+            initializeElements() {
+                this.uploadArea = document.getElementById('uploadArea');
+                this.fileInput = document.getElementById('fileInput');
+                this.musicContainer = document.getElementById('musicContainer');
+                this.musicCount = document.getElementById('musicCount');
+                this.audioPlayer = document.getElementById('audioPlayer');
+                this.audioElement = document.getElementById('audioElement');
+                this.currentTitle = document.getElementById('currentTitle');
+                this.currentArtist = document.getElementById('currentArtist');
+            }
+
+            setupEventListeners() {
+                // 文件上传相关
+                this.uploadArea.addEventListener('click', () => this.fileInput.click());
+                this.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+                
+                // 拖拽上传
+                this.uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.classList.add('dragover');
+                });
+                
+                this.uploadArea.addEventListener('dragleave', () => {
+                    this.uploadArea.classList.remove('dragover');
+                });
+                
+                this.uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    this.uploadArea.classList.remove('dragover');
+                    this.handleFileSelect({ target: { files: e.dataTransfer.files } });
+                });
+
+                // 音频播放结束事件
+                this.audioElement.addEventListener('ended', () => {
+                    this.audioPlayer.classList.remove('show');
+                });
+            }
+
+            async handleFileSelect(event) {
+                const files = Array.from(event.target.files);
+                
+                for (const file of files) {
+                    await this.uploadFile(file);
+                }
+                
+                // 重置文件输入
+                this.fileInput.value = '';
+            }
+
+            async uploadFile(file) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('/api/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        this.showMessage('上传成功！', 'success');
+                        this.loadMusicList();
+                    } else {
+                        this.showMessage(result.error || '上传失败', 'error');
+                    }
+                } catch (error) {
+                    this.showMessage('上传失败：' + error.message, 'error');
+                }
+            }
+
+            async loadMusicList() {
+                try {
+                    const response = await fetch('/api/music');
+                    this.musicList = await response.json();
+                    this.renderMusicList();
+                } catch (error) {
+                    this.showMessage('加载音乐列表失败', 'error');
+                    this.musicContainer.innerHTML = '<div class="no-music"><div class="no-music-icon">❌</div><p>加载失败</p></div>';
+                }
+            }
+
+            getAbsoluteUrl(relativeUrl) {
+                return `${window.location.origin}${relativeUrl}`;
+            }
+
+            copyToClipboard(text, element) {
+                navigator.clipboard.writeText(text).then(() => {
+                    element.classList.add('copied');
+                    element.textContent = '已复制到剪贴板！';
+                    
+                    setTimeout(() => {
+                        element.classList.remove('copied');
+                        element.textContent = text;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    this.showMessage('复制失败', 'error');
+                });
+            }
+
+            renderMusicList() {
+                this.musicCount.textContent = `${this.musicList.length} 首歌曲`;
+                
+                if (this.musicList.length === 0) {
+                    this.musicContainer.innerHTML = `
+                        <div class="no-music">
+                            <div class="no-music-icon">🎵</div>
+                            <p>还没有上传任何音乐文件</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                this.musicContainer.innerHTML = this.musicList.map(music => {
+                    const absoluteUrl = this.getAbsoluteUrl(music.url);
+                    return `
+                        <div class="music-item">
+                            <div class="music-icon">🎵</div>
+                            <div class="music-info">
+                                <div class="music-title">${this.escapeHtml(music.title)}</div>
+                                <div class="music-artist">${this.escapeHtml(music.artist)}</div>
+                                <div class="music-album">${this.escapeHtml(music.album)}</div>
+                                <div class="copy-tooltip">
+                                    <div class="music-url" onclick="musicManager.copyToClipboard('${absoluteUrl}', this)" title="点击复制URL">
+                                        ${absoluteUrl}
+                                    </div>
+                                    <span class="tooltiptext">点击复制</span>
+                                </div>
+                            </div>
+                            <div class="music-controls">
+                                <button class="play-btn" onclick="musicManager.playMusic('${music.id}')" title="播放">
+                                    ▶️
+                                </button>
+                                <button class="delete-btn" onclick="musicManager.deleteMusic('${music.id}')" title="删除">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            playMusic(musicId) {
+                const music = this.musicList.find(m => m.id === musicId);
+                if (!music) return;
+
+                this.audioElement.src = music.url;
+                this.audioElement.play();
+                
+                this.currentTitle.textContent = music.title;
+                this.currentArtist.textContent = music.artist;
+                this.audioPlayer.classList.add('show');
+            }
+
+            async deleteMusic(musicId) {
+                if (!confirm('确定要删除这首音乐吗？')) return;
+
+                try {
+                    const response = await fetch(`/api/delete/${musicId}`, {
+                        method: 'DELETE'
+                    });
+
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        this.showMessage('删除成功', 'success');
+                        this.loadMusicList();
+                        
+                        // 如果正在播放被删除的音乐，停止播放
+                        const music = this.musicList.find(m => m.id === musicId);
+                        if (music && this.audioElement.src.includes(music.filename)) {
+                            this.audioElement.pause();
+                            this.audioPlayer.classList.remove('show');
+                        }
+                    } else {
+                        this.showMessage(result.error || '删除失败', 'error');
+                    }
+                } catch (error) {
+                    this.showMessage('删除失败：' + error.message, 'error');
+                }
+            }
+
+            showMessage(text, type) {
+                const message = document.createElement('div');
+                message.className = `message ${type}`;
+                message.textContent = text;
+                document.body.appendChild(message);
+
+                setTimeout(() => message.classList.add('show'), 100);
+                setTimeout(() => {
+                    message.classList.remove('show');
+                    setTimeout(() => document.body.removeChild(message), 300);
+                }, 3000);
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // 初始化音乐管理器
+        const musicManager = new MusicManager();
+    </script>
+</body>
+</html>
