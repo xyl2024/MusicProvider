@@ -191,4 +191,4 @@ def delete_music(music_id):
     return jsonify({'error': '音乐不存在'}), 404
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=80)
+    app.run(debug=False, host='0.0.0.0', port=8090)
